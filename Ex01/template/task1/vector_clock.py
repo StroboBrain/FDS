@@ -23,6 +23,7 @@ class _Vector_Clock:
 class Vector_Clock_Generator:
     def __init__(self):
         self.data = {}
+
         # dictionary of process_id -> unique vector clock
         self.vector_clocks = {}
 
@@ -47,14 +48,17 @@ class Vector_Clock_Generator:
                 for branch_names in self.data.keys():
                     vc.set_process_clock(0, branch_names)
                 self.vector_clocks[process_id] = vc
-
-    # creates the vector clocks for each process, holds the logic
-    def _generate_vector_clocks(self):
-         # TODO: implement the logic to generate the vector clocks
-         #
-         #
-         pass
     
+    # increments the vector clock for a specific process and branch name
+    def increase_vector_clock(self, process_id, branch_name):
+        vector_clock = self.vector_clocks[process_id]
+        vector_clock.increment(branch_name)
+
+    # sets the vector clock for a specific process and branch name
+    def _set_vector_clock(self, process_id, branch_name, value):
+        vector_clock = self.vector_clocks[process_id]
+        vector_clock.set_process_clock(value, branch_name)
+        
     # returns the vector clocks as a dictionary of _Vector_Clock objects
     def get_vector_clocks(self):
         return self.vector_clocks
@@ -64,4 +68,11 @@ class Vector_Clock_Generator:
         vc_dic = {}
         for process_id, vc in self.vector_clocks.items():
             vc_dic[process_id] = vc.get_clock_dict()
-        return vc_dic
+        return vc_dic    
+    
+    # creates the vector clocks for each process, holds the logic
+    def _generate_vector_clocks(self):
+         # TODO: implement the logic to generate the vector clocks
+         #
+         #
+         pass
