@@ -1,0 +1,29 @@
+digraph G {
+	nodesep=0.4 rankdir=LR ranksep=0.6
+	node [fontsize=12 shape=circle]
+	A1 [label="A1
+[1, 2, 0, 0]"]
+	A2 [label="A2
+[2, 2, 0, 0]"]
+	B1 [label="B1
+[0, 1, 0, 0]"]
+	B2 [label="B2
+[0, 2, 0, 0]"]
+	C1 [label="C1
+[0, 2, 1, 0]"]
+	C2 [label="C2
+[0, 2, 2, 0]"]
+	D1 [label="D1
+[0, 1, 0, 1]"]
+	D2 [label="D2
+[2, 2, 2, 2]"]
+	A2 -> D2
+	C1 -> C2
+	D1 -> D2
+	A1 -> A2
+	B2 -> C1
+	C2 -> D2
+	B1 -> B2
+	B1 -> D1
+	B2 -> A1
+}
