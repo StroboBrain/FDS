@@ -1,2 +1,6 @@
 **/node_modules
 **/.venv
+Ex02/fds-fs25-ex2/template/task2/app.py
+__pycache__/
+*.py[cod]
+*$py.class
