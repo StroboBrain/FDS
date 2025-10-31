@@ -1,0 +1,17 @@
+[31.10.2025 19:56:18.358][ERROR][pool-1-thread-1] SimulationEngine - Chord simulation crashed with an exception.
+java.lang.NullPointerException: null
+	at ch.unibas.dmi.dbis.fds.p2p.simulation.SimulationPeer.closestPrecedingFinger(SimulationPeer.java:55) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.chord.impl.ChordPeer.findPredecessor(ChordPeer.java:78) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.simulation.SimulationPeer.findPredecessor(SimulationPeer.java:49) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.chord.impl.ChordPeer.findSuccessor(ChordPeer.java:43) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.simulation.SimulationPeer.findSuccessor(SimulationPeer.java:42) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.chord.impl.ChordPeer.initFingerTable(ChordPeer.java:213) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.chord.impl.ChordPeer.joinAndUpdate(ChordPeer.java:157) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.chord.api.AbstractChordPeer.join(AbstractChordPeer.java:163) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.simulation.SimulationEngine.initNetwork(SimulationEngine.java:272) ~[main/:?]
+	at ch.unibas.dmi.dbis.fds.p2p.simulation.SimulationEngine.run(SimulationEngine.java:78) ~[main/:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515) ~[?:?]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[?:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) ~[?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) ~[?:?]
+	at java.lang.Thread.run(Thread.java:834) ~[?:?]
