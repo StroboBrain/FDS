@@ -299,8 +299,19 @@ public class ChordPeer extends AbstractChordPeer {
   public void notify(ChordNode nprime) {
     if (this.status() == NodeStatus.OFFLINE || this.status() == NodeStatus.JOINING) return;
 
-    /* TODO: Implementation required. Hint: Null check on predecessor! */
-    throw new RuntimeException("This method has not been implemented!");
+    /* TODO(done): Implementation required. Hint: Null check on predecessor! */
+    ChordNode pred = this.predecessor();
+    if (pred == null) {
+      this.setPredecessor(nprime);
+      return;
+    }
+
+    // Wenn nprime in (pred, this) liegt, ist er „näher“
+    IdentifierCircularInterval interval =
+        IdentifierCircularInterval.createOpen(pred.id(), this.id());
+    if (interval.contains(nprime.id())) {
+      this.setPredecessor(nprime);
+    }
 
   }
 
@@ -313,8 +324,15 @@ public class ChordPeer extends AbstractChordPeer {
   public void fixFingers() {
     if (this.status() == NodeStatus.OFFLINE || this.status() == NodeStatus.JOINING) return;
 
-    /* TODO: Implementation required */
-    throw new RuntimeException("This method has not been implemented!");
+    /* TODO(done): Implementation required */
+    int m = getNetwork().getNbits();
+    Random rnd = new Random();
+    int i = 1 + rnd.nextInt(m);        // zufälligen Finger fixen
+
+    IdentifierCircle<Identifier> circle = getNetwork().getIdentifierCircle();
+    Identifier start = circle.getIdentifierAt(finger().start(i));
+    ChordNode succ = this.findSuccessor(this, start);
+    this.fingerTable.setNode(i, succ);
   }
 
   /**
@@ -327,8 +345,27 @@ public class ChordPeer extends AbstractChordPeer {
   public void stabilize() {
     if (this.status() == NodeStatus.OFFLINE || this.status() == NodeStatus.JOINING) return;
 
-    /* TODO: Implementation required.*/
-    throw new RuntimeException("This method has not been implemented!");
+    /* TODO(done): Implementation required.*/
+    ChordNode succ = this.successor();
+    if (succ == null) {
+      // sollte eigentlich nie passieren — recover über uns selbst
+      this.fingerTable.setNode(1, this);
+      return;
+    }
+
+    ChordNode x = succ.predecessor();
+    // prüfen ob x zwischen uns und unserem aktuellen successor liegt
+    if (x != null) {
+      IdentifierCircularInterval interval =
+          IdentifierCircularInterval.createOpen(this.id(), succ.id());
+      if (interval.contains(x.id())) {
+        // x ist „besserer“ successor
+        this.fingerTable.setNode(1, x);
+        succ = x;
+      }
+    }
+    // successor informieren
+    succ.notify(this);
   }
 
   /**
@@ -340,8 +377,10 @@ public class ChordPeer extends AbstractChordPeer {
   public void checkPredecessor() {
     if (this.status() == NodeStatus.OFFLINE || this.status() == NodeStatus.JOINING) return;
 
-    /* TODO: Implementation required. Hint: Null check on predecessor! */
-    throw new RuntimeException("This method has not been implemented!");
+    ChordNode pred = this.predecessor();
+    if (pred != null && pred.status() == NodeStatus.OFFLINE) {
+      this.setPredecessor(null);
+    }
   }
 
   /**
@@ -352,8 +391,24 @@ public class ChordPeer extends AbstractChordPeer {
   @Override
   public void checkSuccessor() {
     if (this.status() == NodeStatus.OFFLINE || this.status() == NodeStatus.JOINING) return;
-    /* TODO: Implementation required. Hint: Null check on predecessor! */
-    throw new RuntimeException("This method has not been implemented!");
+    /* TODO(done): Implementation required. Hint: Null check on predecessor! */
+    ChordNode succ = this.successor();
+    if (succ != null && succ.status() != NodeStatus.OFFLINE) {
+      return; // alles ok
+    }
+
+    // successor ist tot → versuch aus der Finger-Tabelle einen neuen zu nehmen
+    int m = getNetwork().getNbits();
+    for (int i = 2; i <= m; i++) {
+      ChordNode cand = finger().node(i).orElse(null);
+      if (cand != null && cand != this && cand.status() != NodeStatus.OFFLINE) {
+        this.fingerTable.setNode(1, cand);
+        return;
+      }
+    }
+
+    // worst case — wir zeigen auf uns selbst
+    this.fingerTable.setNode(1, this);
   }
 
   /**
