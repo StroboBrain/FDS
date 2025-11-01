@@ -74,10 +74,16 @@ public class ChordPeer extends AbstractChordPeer {
   public ChordNode closestPrecedingFinger(ChordNode caller, Identifier id) {
     /* TODO(done): Implementation required. */
     int m = fingerTable.size();
-    for (int i = m; i >=1; i--) { //grösser gleich 1, da fingerTable oneBased, K = 1, 2, 3
-      if ((IdentifierCircularInterval.createOpen(this.getIdentifier(), id)).contains(finger().node(i).get().id())) {
-        return finger().node(i).get();
-      }
+    for (int i = m; i >= 1; i--) {
+        var opt = finger().node(i);     //here we need to ensure that we don't get a nullpointer exception
+        if (opt.isPresent()) {
+            ChordNode f = opt.get();
+            if (IdentifierCircularInterval
+                    .createOpen(this.getIdentifier(), id)
+                    .contains(f.getIdentifier())) {
+                return f;
+            }
+        }
     }
     return this;
   }
