@@ -253,7 +253,15 @@ public class ChordPeer extends AbstractChordPeer {
                 .createRightOpen(this.getIdentifier(), node.getIdentifier())
                 .contains(s.getIdentifier());
 
-        if (inInterval) {
+        IdentifierCircle circle = new IdentifierCircle(getNetwork().getNbits());
+        Identifier fingerStart = circle.getIdentifierAt(finger().start(i));
+
+        boolean startInRange =
+        IdentifierCircularInterval
+            .createRightOpen(this.getIdentifier(), s.getIdentifier())
+            .contains(fingerStart);        
+
+        if (inInterval && startInRange) { //was not like this in Paper!! (startInRange)
             //finger[i].node = s;
             this.fingerTable.setNode(i, s);
 
