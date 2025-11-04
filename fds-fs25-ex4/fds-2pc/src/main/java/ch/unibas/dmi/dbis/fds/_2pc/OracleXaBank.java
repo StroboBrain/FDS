@@ -154,7 +154,11 @@ public class OracleXaBank extends AbstractOracleXaBank {
             int p1 = fromRes.prepare(fromXid);
             int p2 = toRes.prepare(toXid);
 
-            // If both prepared OK or read-only, COMMIT
+            // If both prepared OK or read-only, we COMMIT
+            /*Answer Question b) TODO: Review Answer
+            IN this code-block Presumed Abort 2pc would be implemented if possible, this would have the advantage to automatically roll back on failure. We rely on manual rollback
+            We don't see an advantage to implement Transfer of Coordination, because we rely on exceptions to trigger rollbacks. */
+
             if ((p1 == XAResource.XA_OK || p1 == XAResource.XA_RDONLY) &&
                 (p2 == XAResource.XA_OK || p2 == XAResource.XA_RDONLY)) {
 
