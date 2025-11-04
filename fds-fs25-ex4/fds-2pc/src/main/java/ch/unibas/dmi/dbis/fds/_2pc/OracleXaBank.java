@@ -20,13 +20,13 @@ public class OracleXaBank extends AbstractOracleXaBank {
     @Override
     public float getBalance( final String iban ) throws SQLException {
         // TODO: your turn ;-)
-        throw new UnsupportedOperationException( "Implement me :-)" );
+        throw new UnsupportedOperationException( "Error in getBalance" );
     }
 
 
     @Override
     public void transfer( final AbstractOracleXaBank TO_BANK, final String ibanFrom, final String ibanTo, final float value ) {
         // TODO: your turn ;-)
-        throw new UnsupportedOperationException( "Implement me :-)" );
+        throw new UnsupportedOperationException( "Error in transfer" );
     }
 }
