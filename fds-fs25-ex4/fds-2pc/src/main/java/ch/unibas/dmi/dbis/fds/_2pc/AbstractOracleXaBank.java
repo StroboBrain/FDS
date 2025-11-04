@@ -104,56 +104,61 @@ public abstract class AbstractOracleXaBank {
         return xaResource;
     }
 
-    // Implementation of Exercise
-    // Starts a new transaction with a new global transaction id
-    public Xid startTransaction() throws XAException {
-        // Set up resources as final, so they can't be changed
-        final Xid xid = this.getXid();
+    //helper function to start branch
+    private Xid startBranch(final Xid xid) throws XAException {
         // Handles the DB interaction
-        final XAResource xaRes = this.getXaResource();
-
-        // TMNOFLAGS: Start a new transaction branch
+        XAResource xaRes = getXaResource();
         try {
+            // TMNOFLAGS: Start a new transaction branch
             xaRes.start(xid, XAResource.TMNOFLAGS);
             // To give the caller the option to end, prpare, commit, rollback
             return xid;
         } catch (XAException e) {
+            LOG.log(Level.WARNING, "Branch start failed", e.errorCode);
             // cleanup, if the cleanup itself fails, the error is not thrown further
-            try { xaRes.end(xid, XAResource.TMFAIL); } catch (Exception ignore) {}
-            // rethrow the original exception to inform the caller
+            try {
+                xaRes.end(xid, XAResource.TMFAIL); } catch (Exception ignore) {}
+                // rethrow the original exception to inform the caller
             throw e;
         }
+    
     }
 
+    //NM: start a new transaction branch (register on the DB) so the sql operations are bound to this connection.
+    // Implementation of Exercise
+    // Starts a new transaction with a new global transaction id
+    public Xid startTransaction() throws XAException {
+        return startBranch(getXid());
+    }
+    //NM: tries to keep the global transaction id (but different branch), so when we withdraw on a and deposit on b, with 2PC they both commit or both roll back atomically.
      // Implementation of Exercise
      // Could be optimised, lots of code duplication with above method
     public Xid startTransaction(final Xid globalTransactionId) throws XAException {
-        // Set up resources as final, so they can't be changed
-        final Xid xid = this.getXid();
-        // Handles the DB interaction
-        final XAResource xaRes = this.getXaResource();
-        
-
-        try {
-            xaRes.start(xid, XAResource.TMNOFLAGS);
-            return xid;
-        } catch (XAException e) {
-            // cleanup, if the cleanup itself fails, the error is not thrown further
-            try { xaRes.end(xid, XAResource.TMFAIL); } catch (Exception ignore) {}
-            // rethrow the original exception to inform the caller
-            throw e;
-        }
+        return startBranch(getXid(globalTransactionId));
     }
     
+    //NM: End branch/Transaction and rollback. Catch exceptions
     // Implementation of Exercise
     public void endTransaction(final Xid transactionId, final boolean rollback) throws XAException {
         final XAResource xaRes = this.getXaResource();
+        XAException endEx = null;
+        
+        try {
         // Using conditionel ? to set the XAResource flag
         xaRes.end(transactionId, rollback ? XAResource.TMFAIL : XAResource.TMSUCCESS);
-        if (rollback) {
-            // Always rollback if requested
-            xaRes.rollback(transactionId);
+        } catch (XAException e) {
+            endEx = e; //remember to rethrow later
         }
+
+        if (rollback) {
+            try {
+                xaRes.rollback(transactionId); //we might get another exception here
+            } catch (XAException e) {
+                if (endEx == null) throw e;
+            }
+        }
+
+        if (endEx != null) throw endEx;
     }
 
 
