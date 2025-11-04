@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2025-11-02T18:11:03" hostname="NIMITZ" time="0.016">
+  <properties/>
+  <testcase name="testArbitraryTooLargeIndexElement()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.006"/>
+  <testcase name="testDecrementBy()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <testcase name="testIncrementByNeutrum()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testOne()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testFirst()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <testcase name="testLast()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testIncrementNormal()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <testcase name="testIncrementByCommutative()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testDecrementByNeutrum()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testArbitraryElement()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testIncrementBy()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <testcase name="testDecrementNormal()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testIncrementLast()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <testcase name="testDecrementFirst()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <testcase name="testNeutrum()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.0"/>
+  <testcase name="testArbitraryNegativeIndexElement()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.FiniteNaturalNumberSetTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

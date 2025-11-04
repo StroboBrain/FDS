@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" tests="35" skipped="0" failures="0" errors="0" timestamp="2025-11-02T18:11:03" hostname="NIMITZ" time="0.022">
+  <properties/>
+  <testcase name="testSingleElementOpenContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testLeftClosedCircularContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testOpenContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.001"/>
+  <testcase name="testCircleLeftOpenContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.002"/>
+  <testcase name="testCircleClosedContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testRightClosedCircularContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testSingleElementLeftClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testCircleOpenContainsNot2()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testOpenContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testOpenCircularContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.001"/>
+  <testcase name="testClosedCircularContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.001"/>
+  <testcase name="testSingleElementRightClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testRightClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testOpenCircularContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testClosedContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testSingleElementClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testCircleOpenContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testFullOpenContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testLeftClosedContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testFullClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testCircleClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testLeftClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.001"/>
+  <testcase name="testCircleRightOpenContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testRightClosedContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testCircleRightOpenContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testLeftFirstLeftClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testElementFirstLeftClosedCircularContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testRightLastRightClosedContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testRightClosedCircularContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testLeftFirstOpenContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testCircleLeftOpenContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testLeftClosedCircularContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testOpenCircularSingleElementContains()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <testcase name="testClosedCircularContainsNot()" classname="ch.unibas.dmi.dbis.fds.p2p.chord.api.math.CircularIntervalTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
