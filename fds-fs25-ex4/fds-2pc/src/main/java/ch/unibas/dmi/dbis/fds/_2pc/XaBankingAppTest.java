@@ -29,7 +29,7 @@ public class XaBankingAppTest {
 
     private static final Logger LOG = Logger.getLogger(XaBankingAppTest.class.getName());
 
-    /** TODO 1 of 2: Change login credentials to the ones you received via mail. */
+    /** (done) 1 of 2: Change login credentials to the ones you received via mail. */
     private static final String DBMS_USERNAME = "db_27";
     private static final String DBMS_PASSWORD = "EaLjvFWf";
 
@@ -58,7 +58,7 @@ public class XaBankingAppTest {
     }
 
     private enum Bank {
-        /** TODO 2 of 2: Adapt connection details according to exercise sheet. */
+        /** done 2 of 2: Adapt connection details according to exercise sheet. */
         BANK_X("v10", "jdbc:oracle:thin:@dmi-dbis-v10.dmi.unibas.ch:1521/XEPDB1", DBMS_USERNAME, DBMS_PASSWORD),
         BANK_Y("v11", "jdbc:oracle:thin:@dmi-dbis-v11.dmi.unibas.ch:1521/XEPDB1", DBMS_USERNAME, DBMS_PASSWORD);
 

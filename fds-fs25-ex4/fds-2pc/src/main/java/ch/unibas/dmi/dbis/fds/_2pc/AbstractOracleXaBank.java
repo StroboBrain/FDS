@@ -104,27 +104,50 @@ public abstract class AbstractOracleXaBank {
         return xaResource;
     }
 
-
+    // Implementation of Exercise
+    // Starts a new transaction with a new global transaction id
     public Xid startTransaction() throws XAException {
+        // Set up resources as final, so they can't be changed
         final Xid xid = this.getXid();
+        // Handles the DB interaction
+        final XAResource xaRes = this.getXaResource();
 
-        // TODO: your turn ;-)
-        throw new UnsupportedOperationException( "Error in  startTransaction no parameter" );
+        // TMNOFLAGS: Start a new transaction branch
+        try {
+            xaRes.start(xid, XAResource.TMNOFLAGS);
+            // To give the caller the option to end, prpare, commit, rollback
+            return xid;
+        } catch (XAException e) {
+            // cleanup, if the cleanup itself fails, the error is not thrown further
+            try { xaRes.end(xid, XAResource.TMFAIL); } catch (Exception ignore) {}
+            // rethrow the original exception to inform the caller
+            throw e;
+        }
     }
 
-
-    public Xid startTransaction( final Xid globalTransactionId ) throws XAException {
-        final Xid xid = this.getXid( globalTransactionId );
-
-        // TODO: your turn ;-)
-        throw new UnsupportedOperationException( "Error in startTransaction Xid" );
+     // Implementation of Exercise
+    public Xid startTransaction(final Xid globalTransactionId) throws XAException {
+        final Xid xid = this.getXid(globalTransactionId);
+        final XAResource xaRes = this.getXaResource();
+        try {
+            xaRes.start(xid, XAResource.TMNOFLAGS);
+            return xid;
+        } catch (XAException e) {
+            try { xaRes.end(xid, XAResource.TMFAIL); } catch (Exception ignore) {}
+            throw e;
+        }
+    }
+    
+    // Implementation of Exercise
+    public void endTransaction(final Xid transactionId, final boolean rollback) throws XAException {
+        final XAResource xaRes = this.getXaResource();
+        // End the branch; if rollback requested, mark as failed and roll back.
+        xaRes.end(transactionId, rollback ? XAResource.TMFAIL : XAResource.TMSUCCESS);
+        if (rollback) {
+            xaRes.rollback(transactionId);
+        }
     }
 
-
-    public void endTransaction( final Xid transactionId, final boolean rollback ) throws XAException {
-        // TODO: your turn ;-)
-        throw new UnsupportedOperationException( "Error in endTransaction" );
-    }
 
 
     public Xid getXid() throws XAException {
