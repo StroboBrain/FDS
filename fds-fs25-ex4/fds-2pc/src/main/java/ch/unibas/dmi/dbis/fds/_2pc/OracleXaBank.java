@@ -23,9 +23,22 @@ public class OracleXaBank extends AbstractOracleXaBank {
         super( BIC, jdbcConnectionString, dbmsUsername, dbmsPassword );
     }
 
+
      // Implementation of Exercise
     @Override
     public float getBalance(final String iban) throws SQLException {
+
+        // Existence check before querying balance (Could be refactored into a separate method)
+        try (PreparedStatement checkStmt = this.getXaConnection().getConnection()
+                .prepareStatement("SELECT 1 FROM account WHERE iban = ?")) {
+            checkStmt.setString(1, iban);
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new SQLException("Account with IBAN " + iban + " not found.");
+                }
+            }
+        }
+
         // Set up resources
         XAConnection xaConnection = null;
         PreparedStatement statement = null;
@@ -58,11 +71,47 @@ public class OracleXaBank extends AbstractOracleXaBank {
         }
     }
 
-     // Implementation of Exercise
+    // Implementation of Exercise
+    // Some ugly code duplication, could be refactored
     @Override
     public void transfer(final AbstractOracleXaBank TO_BANK, final String ibanFrom, final String ibanTo, final float value) {
+    
 
-        // Prepare resources
+        // Validate input
+        if (value <= 0) {
+            throw new IllegalArgumentException("We are a bank, transfer value must be positive.");
+        }
+        // No transfers to self
+        if (ibanFrom.equals(ibanTo)) {
+            System.out.println("Transfer within the same account is weird, but allowed");
+        }
+
+        // Existence checks for both IBAN
+        try (PreparedStatement stmt = this.getXaConnection().getConnection()
+                .prepareStatement("SELECT 1 FROM account WHERE iban = ?")) {
+            stmt.setString(1, ibanFrom);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new SQLException("Source account with IBAN " + ibanFrom + " not found.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to validate source account: " + e.getMessage(), e);
+        }
+
+        try (PreparedStatement stmt = TO_BANK.getXaConnection().getConnection()
+                .prepareStatement("SELECT 1 FROM account WHERE iban = ?")) {
+            stmt.setString(1, ibanTo);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new SQLException("Destination account with IBAN " + ibanTo + " not found.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to validate destination account: " + e.getMessage(), e);
+        }
+
+        // --- Prepare resources for XA transaction ---
         Xid gtrid = null;
         Xid fromXid = null;
         Xid toXid   = null;
@@ -77,9 +126,9 @@ public class OracleXaBank extends AbstractOracleXaBank {
         PreparedStatement creditStmt = null;
 
         try {
-            gtrid  = this.getXid();                 // global id
-            fromXid = this.getXid(gtrid);           // branch 1 (debit)
-            toXid   = TO_BANK.getXid(gtrid);        // branch 2 (credit)
+            gtrid  = this.getXid();
+            fromXid = this.getXid(gtrid);
+            toXid   = TO_BANK.getXid(gtrid);
 
             // start FROM branch
             fromRes.start(fromXid, XAResource.TMNOFLAGS);
@@ -101,11 +150,11 @@ public class OracleXaBank extends AbstractOracleXaBank {
             creditStmt.executeUpdate();
             toRes.end(toXid, XAResource.TMSUCCESS);
 
-            // PREPARE both
+            // PREPARE both banks
             int p1 = fromRes.prepare(fromXid);
             int p2 = toRes.prepare(toXid);
 
-            // If both prepared OK or read-only, COMMIT both (two-phase)
+            // If both prepared OK or read-only, COMMIT
             if ((p1 == XAResource.XA_OK || p1 == XAResource.XA_RDONLY) &&
                 (p2 == XAResource.XA_OK || p2 == XAResource.XA_RDONLY)) {
 
@@ -113,7 +162,7 @@ public class OracleXaBank extends AbstractOracleXaBank {
                 if (p1 != XAResource.XA_RDONLY) fromRes.commit(fromXid, false);
                 if (p2 != XAResource.XA_RDONLY) toRes.commit(toXid, false);
             } else {
-                // anything else: roll back both
+                // anything else: roll back both, ignore rollback errors
                 try { fromRes.rollback(fromXid); } catch (Exception ignore) {}
                 try { toRes.rollback(toXid); }   catch (Exception ignore) {}
                 throw new RuntimeException("Prepare failed on at least one branch.");
@@ -127,12 +176,13 @@ public class OracleXaBank extends AbstractOracleXaBank {
             try { if (toXid   != null) toRes.rollback(toXid); }     catch (Exception ignore) {}
             throw new RuntimeException("XA transfer failed", e);
         } finally {
-            // close JDBC resources (do NOT commit/rollback here; XA handles that)
+            // close resources
             try { if (debitStmt  != null) debitStmt.close(); }  catch (Exception ignore) {}
             try { if (creditStmt != null) creditStmt.close(); } catch (Exception ignore) {}
             try { if (fromConn   != null) fromConn.close(); }   catch (Exception ignore) {}
             try { if (toConn     != null) toConn.close(); }     catch (Exception ignore) {}
         }
     }
+
 
 }

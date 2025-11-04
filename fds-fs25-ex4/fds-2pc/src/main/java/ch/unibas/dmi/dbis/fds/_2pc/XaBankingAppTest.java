@@ -156,4 +156,73 @@ public class XaBankingAppTest {
             assertEquals(expectedBalanceTo, TO_BANK.getBalance(ibanTo), Float.MIN_VALUE);
         }
     }
+
+    // -----------------------------------------------------------------------
+    // added tests for exercise
+    // -----------------------------------------------------------------------
+
+    /**
+     * Test transferring a negative amount — should not modify any balances.
+     */
+    @Test
+    public void transferNegativeAmount() throws SQLException {
+        final AbstractOracleXaBank FROM_BANK = Bank.BANK_X.bank;
+        final AbstractOracleXaBank TO_BANK = Bank.BANK_Y.bank;
+
+        final String ibanFrom = "CH5367B1";
+        final String ibanTo = "CH5367B1";
+        final float negativeValue = -50.0f;
+
+        // Expect IllegalArgumentException when transfer value is invalid
+        IllegalArgumentException ex = Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> FROM_BANK.transfer(TO_BANK, ibanFrom, ibanTo, negativeValue),
+            "Expected transfer() to reject negative amounts"
+        );
+
+
+        // Verify that balances remain unchanged
+        float balanceFromAfter = FROM_BANK.getBalance(ibanFrom);
+        float balanceToAfter = TO_BANK.getBalance(ibanTo);
+
+        assertEquals(8000f, balanceFromAfter, 0.0001f);
+        assertEquals(8000f, balanceToAfter, 0.0001f);
+    }
+
+    /**
+     * Test that a not available iban triggers rollback and keeps balances unchanged.
+     */
+
+    @Test
+    public void transferRollbackOnFailure() throws SQLException {
+        final AbstractOracleXaBank FROM_BANK = Bank.BANK_X.bank;
+        final AbstractOracleXaBank TO_BANK = Bank.BANK_Y.bank;
+
+        final String ibanFrom = "CH5367B1";
+        final String ibanTo = "INVALID_IBAN_LOL"; // force failure
+        final float transferValue = 200.0f;
+
+        final float balanceFromBefore = FROM_BANK.getBalance(ibanFrom);
+        final float balanceToBefore = TO_BANK.getBalance("CH5367B1");
+
+        try {
+            System.out.println("-- executing transfer that should fail --");
+            FROM_BANK.transfer(TO_BANK, ibanFrom, ibanTo, transferValue);
+            Assertions.fail("Expected transfer to fail due to invalid IBAN.");
+        } catch (Exception e) {
+            System.out.println("Transfer failed as expected: " + e.getMessage());
+        }
+        try {
+            System.out.println("-- executing balance request that should fail --");
+            TO_BANK.getBalance(ibanTo);
+            Assertions.fail("Expected balalance check to fail due to invalid IBAN.");
+        } catch (Exception e) {
+            System.out.println("Balance check failed as expected: " + e.getMessage());
+        }
+
+        assertEquals(balanceFromBefore, FROM_BANK.getBalance(ibanFrom), Float.MIN_VALUE);
+        assertEquals(balanceToBefore, TO_BANK.getBalance("CH5367B1"), Float.MIN_VALUE);
+    }
+
+
 }

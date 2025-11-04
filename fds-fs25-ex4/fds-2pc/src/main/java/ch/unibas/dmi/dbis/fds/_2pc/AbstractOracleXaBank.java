@@ -126,14 +126,21 @@ public abstract class AbstractOracleXaBank {
     }
 
      // Implementation of Exercise
+     // Could be optimised, lots of code duplication with above method
     public Xid startTransaction(final Xid globalTransactionId) throws XAException {
-        final Xid xid = this.getXid(globalTransactionId);
+        // Set up resources as final, so they can't be changed
+        final Xid xid = this.getXid();
+        // Handles the DB interaction
         final XAResource xaRes = this.getXaResource();
+        
+
         try {
             xaRes.start(xid, XAResource.TMNOFLAGS);
             return xid;
         } catch (XAException e) {
+            // cleanup, if the cleanup itself fails, the error is not thrown further
             try { xaRes.end(xid, XAResource.TMFAIL); } catch (Exception ignore) {}
+            // rethrow the original exception to inform the caller
             throw e;
         }
     }
@@ -141,9 +148,10 @@ public abstract class AbstractOracleXaBank {
     // Implementation of Exercise
     public void endTransaction(final Xid transactionId, final boolean rollback) throws XAException {
         final XAResource xaRes = this.getXaResource();
-        // End the branch; if rollback requested, mark as failed and roll back.
+        // Using conditionel ? to set the XAResource flag
         xaRes.end(transactionId, rollback ? XAResource.TMFAIL : XAResource.TMSUCCESS);
         if (rollback) {
+            // Always rollback if requested
             xaRes.rollback(transactionId);
         }
     }
