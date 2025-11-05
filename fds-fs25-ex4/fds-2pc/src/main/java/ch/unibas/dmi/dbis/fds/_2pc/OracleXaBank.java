@@ -75,8 +75,6 @@ public class OracleXaBank extends AbstractOracleXaBank {
     // Some ugly code duplication, could be refactored
     @Override
     public void transfer(final AbstractOracleXaBank TO_BANK, final String ibanFrom, final String ibanTo, final float value) {
-    
-
         // Validate input
         if (value <= 0) {
             throw new IllegalArgumentException("We are a bank, transfer value must be positive.");
@@ -105,6 +103,11 @@ public class OracleXaBank extends AbstractOracleXaBank {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
                     throw new SQLException("Destination account with IBAN " + ibanTo + " not found.");
+                }
+                float destBalance = TO_BANK.getBalance(ibanTo);
+                if (destBalance + value > 15000.0f) {
+                    throw new SQLException("Capacity exceeded on " + ibanTo +
+                            " (" + destBalance + " + " + value + " > 15000)");
                 }
             }
         } catch (SQLException e) {
