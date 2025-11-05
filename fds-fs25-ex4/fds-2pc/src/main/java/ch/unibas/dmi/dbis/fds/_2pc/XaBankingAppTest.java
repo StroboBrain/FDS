@@ -223,50 +223,49 @@ public class XaBankingAppTest {
         assertEquals(balanceFromBefore, FROM_BANK.getBalance(ibanFrom), Float.MIN_VALUE);
         assertEquals(balanceToBefore, TO_BANK.getBalance("CH5367B1"), Float.MIN_VALUE);
     }
-/**
- * Test that the capacity constraint (Balance <= 15000) is enforced:
- * depositing into an already-full account must fail and keep both balances unchanged.
- */
-@Test
-public void transferCapacityExceededRollsBack() throws SQLException {
-    final AbstractOracleXaBank FROM_BANK = Bank.BANK_X.bank; // source
-    final AbstractOracleXaBank TO_BANK   = Bank.BANK_Y.bank; // destination (has CH5367B2 with 15000)
+    /**
+     * Test that the capacity constraint (Balance <= 15000) is enforced:
+     * depositing into an already-full account must fail and keep both balances unchanged.
+     */
+    @Test
+    public void transferCapacityExceededRollsBack() throws SQLException {
+        final AbstractOracleXaBank FROM_BANK = Bank.BANK_X.bank;
+        final AbstractOracleXaBank TO_BANK   = Bank.BANK_Y.bank;
 
-    final String ibanFrom = "CH5367B1"; // 8000 by default
-    final String ibanTo   = "CH5367B2"; // 15000 by default (already at max)
-    final float transferValue = 1.0f;   // any positive amount would exceed 15000
+        final String ibanFrom = "CH5367B1"; //8000 by default
+        final String ibanTo   = "CH5367B2"; //15000 by default
+        final float transferValue = 1.0f;   
 
-    printTestDescription("Capacity Exceeded => Global Rollback", ibanFrom, Bank.BANK_X.name(), ibanTo, Bank.BANK_Y.name(), transferValue);
+        printTestDescription("Capacity Exceeded => Global Rollback", ibanFrom, Bank.BANK_X.name(), ibanTo, Bank.BANK_Y.name(), transferValue);
 
-    // balances before
-    float fromBefore = FROM_BANK.getBalance(ibanFrom);
-    float toBefore   = TO_BANK.getBalance(ibanTo);
-    printBalance(true,  ibanFrom, Bank.BANK_X.name(), fromBefore);
-    printBalance(true,  ibanTo,   Bank.BANK_Y.name(), toBefore);
+        //balances before
+        float fromBefore = FROM_BANK.getBalance(ibanFrom);
+        float toBefore   = TO_BANK.getBalance(ibanTo);
+        printBalance(true,  ibanFrom, Bank.BANK_X.name(), fromBefore);
+        printBalance(true,  ibanTo,   Bank.BANK_Y.name(), toBefore);
 
-     RuntimeException ex = null;
-    try {
-        System.out.println("-- executing transfer that should exceed capacity --");
-        FROM_BANK.transfer(TO_BANK, ibanFrom, ibanTo, transferValue);
-        Assertions.fail("Expected transfer to fail due to capacity exceed (>15000)");
-    } catch (RuntimeException e) {
-        ex = e;
-        // Log die Exception + Cause wie in den anderen Checks
-        System.out.println("Transfer failed as expected: " + e.getMessage());
-        if (e.getCause() != null) {
-            System.out.println("Cause: " + e.getCause().getClass().getSimpleName() + " - " + e.getCause().getMessage());
+        RuntimeException ex = null;
+        try {
+            System.out.println("-- executing transfer that should exceed capacity --");
+            FROM_BANK.transfer(TO_BANK, ibanFrom, ibanTo, transferValue);
+            Assertions.fail("Expected transfer to fail due to capacity exceed (>15000)");
+        } catch (RuntimeException e) {
+            ex = e;
+            //Log die Exception + Cause wie in den anderen Checks
+            System.out.println("Transfer failed as expected: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.out.println("Cause: " + e.getCause().getClass().getSimpleName() + " - " + e.getCause().getMessage());
+            }
+        } finally {
+            float fromAfter = FROM_BANK.getBalance(ibanFrom);
+            float toAfter   = TO_BANK.getBalance(ibanTo);
+            printBalance(false, ibanFrom, Bank.BANK_X.name(), fromAfter);
+            printBalance(false, ibanTo,   Bank.BANK_Y.name(), toAfter);
+
+            //balances must be unchanged (global rollback)
+            assertEquals(fromBefore, fromAfter, Float.MIN_VALUE);
+            assertEquals(toBefore,   toAfter,   Float.MIN_VALUE);
         }
-    } finally {
-        // AFTER
-        float fromAfter = FROM_BANK.getBalance(ibanFrom);
-        float toAfter   = TO_BANK.getBalance(ibanTo);
-        printBalance(false, ibanFrom, Bank.BANK_X.name(), fromAfter);
-        printBalance(false, ibanTo,   Bank.BANK_Y.name(), toAfter);
-
-        //balances must be unchanged (global rollback)
-        assertEquals(fromBefore, fromAfter, Float.MIN_VALUE);
-        assertEquals(toBefore,   toAfter,   Float.MIN_VALUE);
     }
-}
 
 }
