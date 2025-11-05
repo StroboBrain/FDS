@@ -104,18 +104,12 @@ public class OracleXaBank extends AbstractOracleXaBank {
                 if (!rs.next()) {
                     throw new SQLException("Destination account with IBAN " + ibanTo + " not found.");
                 }
-                float destBalance = TO_BANK.getBalance(ibanTo);
-                if (destBalance + value > 15000.0f) {
-                    throw new SQLException("Capacity exceeded on " + ibanTo +
-                            " (" + destBalance + " + " + value + " > 15000)");
-                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to validate destination account: " + e.getMessage(), e);
         }
 
         // --- Prepare resources for XA transaction ---
-        Xid gtrid = null;
         Xid fromXid = null;
         Xid toXid   = null;
 
@@ -128,68 +122,95 @@ public class OracleXaBank extends AbstractOracleXaBank {
         PreparedStatement debitStmt  = null;
         PreparedStatement creditStmt = null;
 
+        boolean endedFrom = false;
+        boolean endedTo   = false;
+
         try {
-            gtrid  = this.getXid();
-            fromXid = this.getXid(gtrid);
-            toXid   = TO_BANK.getXid(gtrid);
+            fromXid = this.startTransaction();          //new gtrid
+            toXid = TO_BANK.startTransaction(fromXid); //same gtrid
 
             // start FROM branch
-            fromRes.start(fromXid, XAResource.TMNOFLAGS);
+            //fromRes.start(fromXid, XAResource.TMNOFLAGS);
             fromConn = this.getXaConnection().getConnection();
             debitStmt = fromConn.prepareStatement(
                     "UPDATE account SET balance = balance - ? WHERE iban = ?");
             debitStmt.setFloat(1, value);
             debitStmt.setString(2, ibanFrom);
             debitStmt.executeUpdate();
-            fromRes.end(fromXid, XAResource.TMSUCCESS);
+            this.endTransaction(fromXid, false);
+            endedFrom = true;
 
             // start TO branch
-            toRes.start(toXid, XAResource.TMNOFLAGS);
+
             toConn = TO_BANK.getXaConnection().getConnection();
+
+            try (PreparedStatement chk = toConn.prepareStatement(
+                "SELECT balance FROM account WHERE iban = ? FOR UPDATE")) {
+                chk.setString(1, ibanTo);
+                try (ResultSet rs = chk.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new SQLException("Destination account with IBAN " + ibanTo + " not found.");
+                    }
+                    float destBalance = rs.getFloat(1);
+                    if (destBalance + value > 15000.0f) {
+                        throw new SQLException("Capacity exceeded on " + ibanTo +
+                                " (" + destBalance + " + " + value + " > 15000)");
+                    }
+                }
+            }
+            
             creditStmt = toConn.prepareStatement(
                     "UPDATE account SET balance = balance + ? WHERE iban = ?");
             creditStmt.setFloat(1, value);
             creditStmt.setString(2, ibanTo);
             creditStmt.executeUpdate();
-            toRes.end(toXid, XAResource.TMSUCCESS);
+            TO_BANK.endTransaction(toXid, false);
+            endedTo = true;
 
             // PREPARE both banks
             int p1 = fromRes.prepare(fromXid);
             int p2 = toRes.prepare(toXid);
-
             // If both prepared OK or read-only, we COMMIT
             /*Answer Question b) TODO: Review Answer
             IN this code-block Presumed Abort 2pc would be implemented if possible, this would have the advantage to automatically roll back on failure. We rely on manual rollback
             We don't see an advantage to implement Transfer of Coordination, because we rely on exceptions to trigger rollbacks. */
+            
 
             if ((p1 == XAResource.XA_OK || p1 == XAResource.XA_RDONLY) &&
-                (p2 == XAResource.XA_OK || p2 == XAResource.XA_RDONLY)) {
-
+            (p2 == XAResource.XA_OK || p2 == XAResource.XA_RDONLY)) {
                 // XA_RDONLY means nothing to commit for that branch
                 if (p1 != XAResource.XA_RDONLY) fromRes.commit(fromXid, false);
-                if (p2 != XAResource.XA_RDONLY) toRes.commit(toXid, false);
+                if (p2 != XAResource.XA_RDONLY) toRes.commit(toXid,   false);
             } else {
                 // anything else: roll back both, ignore rollback errors
                 try { fromRes.rollback(fromXid); } catch (Exception ignore) {}
-                try { toRes.rollback(toXid); }   catch (Exception ignore) {}
+                try { toRes.rollback(toXid);     } catch (Exception ignore) {}
                 throw new RuntimeException("Prepare failed on at least one branch.");
             }
 
+        } catch (IllegalArgumentException iae) {
+            throw iae;
         } catch (Exception e) {
-            // best-effort global rollback if we have branch ids
-            try { if (fromXid != null) fromRes.end(fromXid, XAResource.TMFAIL); } catch (Exception ignore) {}
-            try { if (toXid   != null) toRes.end(toXid,   XAResource.TMFAIL); }   catch (Exception ignore) {}
-            try { if (fromXid != null) fromRes.rollback(fromXid); } catch (Exception ignore) {}
-            try { if (toXid   != null) toRes.rollback(toXid); }     catch (Exception ignore) {}
-            throw new RuntimeException("XA transfer failed", e);
+            //best-effort global rollback with abstract
+            try {
+                if (fromXid != null) {
+                    if (!endedFrom) this.endTransaction(fromXid, true);
+                    else            fromRes.rollback(fromXid);
+                }
+            } catch (Exception ignore) {}
+            try {
+                if (toXid != null) {
+                    if (!endedTo) TO_BANK.endTransaction(toXid, true);
+                    else          toRes.rollback(toXid);
+                }
+            } catch (Exception ignore) {}
+            // CHANGED: Message durchreichen, damit Tests "exceed" erkennen
+            throw new RuntimeException("Transfer failed: " + e.getMessage(), e);
         } finally {
-            // close resources
             try { if (debitStmt  != null) debitStmt.close(); }  catch (Exception ignore) {}
             try { if (creditStmt != null) creditStmt.close(); } catch (Exception ignore) {}
             try { if (fromConn   != null) fromConn.close(); }   catch (Exception ignore) {}
             try { if (toConn     != null) toConn.close(); }     catch (Exception ignore) {}
         }
     }
-
-
 }
