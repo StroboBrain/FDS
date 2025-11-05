@@ -24,21 +24,26 @@ public class OracleXaBank extends AbstractOracleXaBank {
     }
 
 
+    //NM: We only read here so we don't need a 2PC.
+    //NM: prepare a connection and get the value. It closes automatically.
      // Implementation of Exercise
     @Override
     public float getBalance(final String iban) throws SQLException {
 
         // Existence check before querying balance (Could be refactored into a separate method)
-        try (PreparedStatement checkStmt = this.getXaConnection().getConnection()
-                .prepareStatement("SELECT 1 FROM account WHERE iban = ?")) {
-            checkStmt.setString(1, iban);
-            try (ResultSet rs = checkStmt.executeQuery()) {
+        final String sql = "SELECT Balance FROM account WHERE IBAN = ?";
+        try (Connection c = getXaConnection().getConnection();
+            PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, iban);
+            try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
                     throw new SQLException("Account with IBAN " + iban + " not found.");
                 }
+                return rs.getFloat("balance");
             }
         }
-
+    }
+        /*
         // Set up resources
         XAConnection xaConnection = null;
         PreparedStatement statement = null;
@@ -68,16 +73,63 @@ public class OracleXaBank extends AbstractOracleXaBank {
             if (statement != null) {
                 statement.close();
             }
-        }
-    }
+        }*/
 
     // Implementation of Exercise
     // Some ugly code duplication, could be refactored
     @Override
     public void transfer(final AbstractOracleXaBank TO_BANK, final String ibanFrom, final String ibanTo, final float value) {
     
+        Xid xidA = null;
+        Xid xidB = null;
+        boolean failed = false;
+        try {
+            //NM: Here we start setup a new global transaction id (gtrid) with 2 branches. Both have the same gtrid but are seperate branches.
+            xidA = this.startTransaction();
+            xidB = TO_BANK.startTransaction(xidA);
+            
+            try(Connection cA = this.getXaConnection().getConnection();
+                Connection cB = TO_BANK.getXaConnection().getConnection();
+                ){
+                
+                withdraw(cA, ibanFrom, value);
+                deposit(cB, ibanTo, value);
 
-        // Validate input
+            }
+            this.endTransaction(xidA, false);
+            TO_BANK.endTransaction(xidB, false); //NM: should give us TMSUCCESS-Flag
+
+            //(From prepare Method): Returns A value indicating the resource manager's vote on the outcome of the transaction. 
+            //The possible values are: XA_RDONLY or XA_OK. If the resource manager wants to roll back the transaction, it should do so by raising an appropriate XAException in the prepare method.
+            int pA = this.getXaResource().prepare(xidA);
+            int pB = TO_BANK.getXaResource().prepare(xidB);
+            /*Answer Question b) TODO: Review Answer
+            IN this code-block Presumed Abort 2pc would be implemented if possible, this would have the advantage to automatically roll back on failure. We rely on manual rollback
+            We don't see an advantage to implement Transfer of Coordination, because we rely on exceptions to trigger rollbacks. */
+            if (pA == XAResource.XA_OK && pB == XAResource.XA_OK) {
+                this.getXaResource().commit(xidA, false);
+                TO_BANK.getXaResource().commit(xidB, false);
+            }else{
+                failed = true;
+                safeRollbackBoth(this, xidA, TO_BANK, xidB);
+            }
+        }catch(Exception e){
+            failed = true;
+            try {
+                if (xidA != null) {
+                    this.endTransaction(xidA, failed);
+                }
+            } catch (Exception ignore) {}
+            try {
+                if (xidB != null) {
+                    TO_BANK.endTransaction(xidB, failed);
+                }
+            } catch (Exception ignore) {}
+
+            throw new RuntimeException("Transfeir failed: "+ e.getMessage(), e);
+        }
+    }
+        /*// Validate input
         if (value <= 0) {
             throw new IllegalArgumentException("We are a bank, transfer value must be positive.");
         }
@@ -110,8 +162,8 @@ public class OracleXaBank extends AbstractOracleXaBank {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to validate destination account: " + e.getMessage(), e);
         }
-
-        // --- Prepare resources for XA transaction ---
+        
+        //  Prepare resources for XA transaction 
         Xid gtrid = null;
         Xid fromXid = null;
         Xid toXid   = null;
@@ -148,6 +200,7 @@ public class OracleXaBank extends AbstractOracleXaBank {
             creditStmt.setFloat(1, value);
             creditStmt.setString(2, ibanTo);
             creditStmt.executeUpdate();
+            
             toRes.end(toXid, XAResource.TMSUCCESS);
 
             // PREPARE both banks
@@ -155,9 +208,6 @@ public class OracleXaBank extends AbstractOracleXaBank {
             int p2 = toRes.prepare(toXid);
 
             // If both prepared OK or read-only, we COMMIT
-            /*Answer Question b) TODO: Review Answer
-            IN this code-block Presumed Abort 2pc would be implemented if possible, this would have the advantage to automatically roll back on failure. We rely on manual rollback
-            We don't see an advantage to implement Transfer of Coordination, because we rely on exceptions to trigger rollbacks. */
 
             if ((p1 == XAResource.XA_OK || p1 == XAResource.XA_RDONLY) &&
                 (p2 == XAResource.XA_OK || p2 == XAResource.XA_RDONLY)) {
@@ -186,7 +236,57 @@ public class OracleXaBank extends AbstractOracleXaBank {
             try { if (fromConn   != null) fromConn.close(); }   catch (Exception ignore) {}
             try { if (toConn     != null) toConn.close(); }     catch (Exception ignore) {}
         }
+    }*/
+
+     private static void withdraw(Connection c, String ibanFrom, float value) throws SQLException {
+        float balance = selectBalanceForUpdate(c, ibanFrom);
+        //check if we want to withdraw more than we have.
+        if (balance < value) {
+            throw new SQLException("Insufficient funds on " + ibanFrom + " (" + balance + " < " + value + ")");
+        }
+        try (PreparedStatement up = c.prepareStatement(
+                "UPDATE account SET Balance = Balance - ? WHERE IBAN = ?")) {
+            up.setFloat(1, value);
+            up.setString(2, ibanFrom);
+            if (up.executeUpdate() != 1) {
+                throw new SQLException("Withdraw update failed for " + ibanFrom);
+            }
+        }
     }
 
+    private static void deposit(Connection c, String ibanTo, float value) throws SQLException {
+        float balance = selectBalanceForUpdate(c, ibanTo);
+        //NM: We might need to check here because we have a constraint in abstractOracleXABank, that max is 15000.
+        if (balance + value > 15000.0f) {
+            throw new SQLException("Capacity exceeded on " + ibanTo + " (" + balance + " + " + value + " > 15000)");
+        }
+        try (PreparedStatement up = c.prepareStatement(
+                "UPDATE account SET Balance = Balance + ? WHERE IBAN = ?")) {
+            up.setFloat(1, value);
+            up.setString(2, ibanTo);
+            if (up.executeUpdate() != 1) {
+                throw new SQLException("Deposit update failed for " + ibanTo);
+            }
+        }
+    }
+
+    private static float selectBalanceForUpdate(Connection c, String iban) throws SQLException {
+        //NM: locks the row until the Branch ends to prevent lost updates if the row disapears?
+        try (PreparedStatement ps = c.prepareStatement(
+                "SELECT Balance FROM account WHERE IBAN = ? FOR UPDATE")) {
+            ps.setString(1, iban);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    throw new SQLException("IBAN not found: " + iban);
+                }
+                return rs.getFloat(1);
+            }
+        }
+    }
+
+    private static void safeRollbackBoth(OracleXaBank a, Xid xidA, AbstractOracleXaBank bBank, Xid xidB) {
+        try { a.getXaResource().rollback(xidA); } catch (Exception ignore) {}
+        try { bBank.getXaResource().rollback(xidB); } catch (Exception ignore) {}
+    }
 
 }
