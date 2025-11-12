@@ -1,0 +1,10 @@
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4810  SLURM_JOB_ID: 2453503
+SLURM_NTASKS_PER_NODE=2  SLURM_CPUS_PER_TASK=1  OMP_NUM_THREADS=1
+omp_get_num_procs()=1  omp_get_max_threads()=1
+Hello World from thread ID: 0 / 1 on dmi-cl-node001.dmi.p.unibas.ch (PID 4810)
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4811  SLURM_JOB_ID: 2453503
+SLURM_NTASKS_PER_NODE=2  SLURM_CPUS_PER_TASK=1  OMP_NUM_THREADS=1
+omp_get_num_procs()=1  omp_get_max_threads()=1
+Hello World from thread ID: 0 / 1 on dmi-cl-node001.dmi.p.unibas.ch (PID 4811)

@@ -1,0 +1,5 @@
+we launch p processes. Each process creates T threads. So in the end we get P x T workers. We are limited to a total of 20 workers because our system only has 20 CPUs per cluster node.
+
+The ordering is off because we have a race condition, no synchronization happens.
+
+we could synchronize it with pragma omp critical or single.

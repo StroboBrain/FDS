@@ -1,0 +1,14 @@
+T2.2) Report miniHPC memory architecture in lecture terms. What kind of system is it?
+
+We have a total of 22 cluster nodes on xeon partition. 
+Each cluster node has 2 Intel Xeon E5-2640 v4 processors. 
+Each processor has 10 logigal cores.
+Each cluster node has 2 sockets / numa domains. 
+
+T2.3)
+A numa domain is a number of CPU cores that have the same local memory uniform access time. Memory in another NUMA domain is remote and slower to access.
+Thats why it is called Non Uniform Memory Access (depending on which NUMA domain it is, the access time is different)
+
+From the results we get that one xeon node has 2 NUMA domains (node0: CPUs 0-9 and node1: CPUs 10-19), each around 32 GB in size.
+
+

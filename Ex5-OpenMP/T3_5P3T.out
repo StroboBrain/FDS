@@ -1,0 +1,35 @@
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4864  SLURM_JOB_ID: 2453506
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=3  OMP_NUM_THREADS=3
+omp_get_num_procs()=3  omp_get_max_threads()=3
+Hello World from thread ID: 0 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4864)
+Hello World from thread ID: 2 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4864)
+Hello World from thread ID: 1 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4864)
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4863  SLURM_JOB_ID: 2453506
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=3  OMP_NUM_THREADS=3
+omp_get_num_procs()=3  omp_get_max_threads()=3
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4865  SLURM_JOB_ID: 2453506
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=3  OMP_NUM_THREADS=3
+omp_get_num_procs()=3  omp_get_max_threads()=3
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4867  SLURM_JOB_ID: 2453506
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=3  OMP_NUM_THREADS=3
+omp_get_num_procs()=3  omp_get_max_threads()=3
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4866  SLURM_JOB_ID: 2453506
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=3  OMP_NUM_THREADS=3
+omp_get_num_procs()=3  omp_get_max_threads()=3
+Hello World from thread ID: 0 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4865)
+Hello World from thread ID: 2 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4865)
+Hello World from thread ID: 1 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4865)
+Hello World from thread ID: 0 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4867)
+Hello World from thread ID: 2 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4867)
+Hello World from thread ID: 1 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4867)
+Hello World from thread ID: 0 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4863)
+Hello World from thread ID: 2 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4863)
+Hello World from thread ID: 1 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4863)
+Hello World from thread ID: 2 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4866)
+Hello World from thread ID: 0 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4866)
+Hello World from thread ID: 1 / 3 on dmi-cl-node001.dmi.p.unibas.ch (PID 4866)

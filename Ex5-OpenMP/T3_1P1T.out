@@ -1,0 +1,5 @@
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4640  SLURM_JOB_ID: 2453500
+SLURM_NTASKS_PER_NODE=1  SLURM_CPUS_PER_TASK=1  OMP_NUM_THREADS=1
+omp_get_num_procs()=1  omp_get_max_threads()=1
+Hello World from thread ID: 0 / 1 on dmi-cl-node001.dmi.p.unibas.ch (PID 4640)

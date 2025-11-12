@@ -1,0 +1,40 @@
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4937  SLURM_JOB_ID: 2453507
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=4  OMP_NUM_THREADS=4
+omp_get_num_procs()=4  omp_get_max_threads()=4
+Hello World from thread ID: 0 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4937)
+Hello World from thread ID: 2 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4937)
+Hello World from thread ID: 1 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4937)
+Hello World from thread ID: 3 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4937)
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4935  SLURM_JOB_ID: 2453507
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=4  OMP_NUM_THREADS=4
+omp_get_num_procs()=4  omp_get_max_threads()=4
+Hello World from thread ID: 0 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4935)
+Hello World from thread ID: 2 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4935)
+Hello World from thread ID: 1 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4935)
+Hello World from thread ID: 3 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4935)
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4934  SLURM_JOB_ID: 2453507
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=4  OMP_NUM_THREADS=4
+omp_get_num_procs()=4  omp_get_max_threads()=4
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4938  SLURM_JOB_ID: 2453507
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=4  OMP_NUM_THREADS=4
+omp_get_num_procs()=4  omp_get_max_threads()=4
+=== Process report ===
+Host: dmi-cl-node001.dmi.p.unibas.ch  PID: 4936  SLURM_JOB_ID: 2453507
+SLURM_NTASKS_PER_NODE=5  SLURM_CPUS_PER_TASK=4  OMP_NUM_THREADS=4
+omp_get_num_procs()=4  omp_get_max_threads()=4
+Hello World from thread ID: 0 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4936)
+Hello World from thread ID: 3 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4936)
+Hello World from thread ID: 1 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4936)
+Hello World from thread ID: 2 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4936)
+Hello World from thread ID: 0 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4934)
+Hello World from thread ID: 2 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4934)
+Hello World from thread ID: 3 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4934)
+Hello World from thread ID: 1 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4934)
+Hello World from thread ID: 0 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4938)
+Hello World from thread ID: 3 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4938)
+Hello World from thread ID: 1 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4938)
+Hello World from thread ID: 2 / 4 on dmi-cl-node001.dmi.p.unibas.ch (PID 4938)
