@@ -1,0 +1,40 @@
+=========================================
+Running T4_2_parallel with 1 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 5.49
+num threads    = 1
+
+=========================================
+Running T4_2_parallel with 2 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 2.99
+num threads    = 2
+
+=========================================
+Running T4_2_parallel with 4 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 1.47
+num threads    = 4
+
+=========================================
+Running T4_2_parallel with 8 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 0.77
+num threads    = 8
+
+=========================================
+Running T4_2_parallel with 16 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 0.59
+num threads    = 16
+

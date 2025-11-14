@@ -1,0 +1,54 @@
+This was our data:
+=========================================
+Running T4_2_parallel with 1 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 5.49
+num threads    = 1
+
+=========================================
+Running T4_2_parallel with 2 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 2.99
+num threads    = 2
+
+=========================================
+Running T4_2_parallel with 4 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 1.47
+num threads    = 4
+
+=========================================
+Running T4_2_parallel with 8 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 0.77
+num threads    = 8
+
+=========================================
+Running T4_2_parallel with 16 OpenMP threads
+=========================================
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 0.59
+num threads    = 16
+
+
+Discussion:
+==================================================================================
+num threads = 1: With one thread we only have one "worker", which is symbolically speaking the sequential execution. This corresponds also with the execution time of the sequential program.
+==================================================================================
+num threads = 2: We could say we almost split the work in half but in my understanding there is also some coordination effort. Causing a little over half the time.
+==================================================================================
+num threads = 4: We split the work by 4 workers, so the execution time is approximately split into 4. The coordination effort is not that big (like for 16) but we now may benefit from spacial locality (one contigous block => less memory misses)
+==================================================================================
+num threads = 8: We split the work by 8 workers, now the coordination effort increases while the work is further split. 
+==================================================================================
+num threads = 16: We split the work by 16 workers, which leads to a higher coordination effort. We also have to wait for the slowest thread in our code to summarize the results.
+==================================================================================
