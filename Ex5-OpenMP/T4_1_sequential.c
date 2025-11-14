@@ -24,6 +24,7 @@ int main(void) {
     double mean_sq = sum_sq / (double)n;
     double variance = mean_sq - mean * mean;
 
+    printf("T4.1 sequential\n");
     printf("variance       = %.2f\n", variance);
     printf("total time (s) = %.2f\n", end - start);
     printf("num threads    = %d\n\n", omp_get_max_threads());

@@ -1,0 +1,40 @@
+This was our data: 
+
+Running T4_1
+T4.1 sequential
+variance       = 8.25
+total time (s) = 5.49
+num threads    = 8
+
+Running T4_2
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 0.73
+num threads    = 8
+
+Running T4_3
+variance       = 8.25
+total time (s) = 3.34
+num threads    = 8
+
+Running T4_3a
+variance       = 8.25
+total time (s) = 3.33
+num threads    = 8
+
+T4.1 With the sequential execution, no work was parallelized, so quite long execution time.
+
+T4.2 With the manual SPMD (single program multible data) we first created the data in parallel (each thread created a chunk of data) 
+and then each thread stayed within this chunk for the following calculations.
+By working within a contigous chunk, we reduce cache misses (better locality). Like this me might end up having fewer accesses in slower cache (fewer accesses to L3 for example).
+
+T4.3 In this version only the last two loops are parallelized using #pragma omp for with reduction, while the data is still generated sequentially (by a single thread). 
+The sequential data generation is costly (in terms of time). 
+
+T4.3a The nowait clause only removes the implicit barrier after the first parallel loop.
+With this, when finising the first loop, the thread can then immediately start the second loop. 
+However, both parallel loops have a very similar, large workload and there is no significant load imbalance between threads, so the cost of this barrier is small (no real time imporovement). 
+As a result, the runtimes of T4.3 and T4.3a are almost identical.
+
+
+

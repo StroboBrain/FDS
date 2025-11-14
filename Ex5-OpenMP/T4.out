@@ -1,0 +1,22 @@
+Running T4_1
+T4.1 sequential
+variance       = 8.25
+total time (s) = 5.49
+num threads    = 8
+
+Running T4_2
+T4.2 Manual SPMD (single program multible data)
+variance       = 8.25
+total time (s) = 0.73
+num threads    = 8
+
+Running T4_3
+variance       = 8.25
+total time (s) = 3.34
+num threads    = 8
+
+Running T4_3a
+variance       = 8.25
+total time (s) = 3.33
+num threads    = 8
+
