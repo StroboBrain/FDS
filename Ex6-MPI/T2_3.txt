@@ -1,0 +1,13 @@
+Rank: 1 on node: dmi-cl-node002.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
+Rank: 2 on node: dmi-cl-node003.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
+Rank: 3 on node: dmi-cl-node004.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
+
+
+Rank: 1 on node: dmi-cl-node001.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
+Rank: 2 on node: dmi-cl-node002.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
+Rank: 3 on node: dmi-cl-node002.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
+slurmstepd: error: *** JOB 2454859 ON cl-node001 CANCELLED AT 2025-11-19T20:03:40 ***
+
+
+i canceled the job because Ranks > 3 are waiting for a message that they will never receive. So like this the process is never terminating.
+To fix this problem, we should make the code more flexible => so to send a message to all ranks in the network (with MPI_Comm_size(MPI_COMM_WORLD, &size);)
