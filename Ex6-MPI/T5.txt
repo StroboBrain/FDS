@@ -1,1 +1,0 @@
-see barrier.c file for solution.

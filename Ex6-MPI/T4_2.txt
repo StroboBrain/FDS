@@ -1,6 +1,0 @@
-Rank: 2 on node: dmi-cl-node003.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
-Rank: 3 on node: dmi-cl-node004.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
-Rank: 1 on node: dmi-cl-node002.dmi.p.unibas.ch received the following message: Hello World from rank: 0 on node: dmi-cl-node001.dmi.p.unibas.ch
-
-With the broadcast approach we address all ranks with the same message. We have fewer ways to customize the message for each rank. With Broadcasting, all ranks participate in a collective operation, so no risk of open or unmatched communication (send and receive missmatch). 
-Broadcasting is quite similar to the blocking mpisend that adresses all ranks with the same msg only that we don't need to address each rank explicitly and it is obviously not point to point.
