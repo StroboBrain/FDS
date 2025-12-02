@@ -3,7 +3,6 @@ import numpy as np
 from scipy import stats
 
 class DifferentialPrivacyAnalyzer:
-
     # Initialize with a pandas DataFrame
     def __init__(self, df: pd.DataFrame):
         self.df = df
@@ -73,14 +72,11 @@ class DifferentialPrivacyAnalyzer:
         noisy_sum = clipped.sum() + noise
         return noisy_sum, clipped.max()
 
-
-
     def clip_column(column: str, percentage: float) ->pd.DataFrame:
         lower_bound = column.quantile(percentage / 2)
         upper_bound = column.quantile(1 - (percentage / 2))
         return column.clip(lower=lower_bound, upper=upper_bound)
     
-
     def dp_differencing_attack(self, epsilon: float):
         sensitivity = 103
         # Select the age of the person
@@ -93,12 +89,11 @@ class DifferentialPrivacyAnalyzer:
 
         return noisy_age
     
-
-# Helper function to run all tasks
+# Helper function
 def nextExercise():
     print("\n" + "-"*90 + "\n")
 
-
+# Runs the functions for the excercise
 def main():
     adult_df = pd.read_csv("adult_with_pii.csv")
     analyzer = DifferentialPrivacyAnalyzer(adult_df)
@@ -109,7 +104,7 @@ def main():
     noisy_count = analyzer.laplace_mech(count_over_29, sensitivity=1, epsilon=np.log(2))
 
     nextExercise()
-    print("Ex 1:")
+    print("1:")
     print(f"1 a) Sensitivity of count query is 1.")
     print(f"True count of age 29: {count_over_29}")
     print(f"Noisy count: {noisy_count}")
@@ -118,21 +113,20 @@ def main():
     contingency_table_noisy = analyzer.dp_add_noise_to_contingency_table(contingency_table, 0.3, True)
 
     nextExercise()
-    print("Ex 2:")
+    print("2:")
     print(f"2 b) Contingency table between 'Relationship' and 'Race':")
     print(contingency_table)
     print(f"Noisy Contingency table with differential privacy:")
     print(contingency_table_noisy)
 
     nextExercise()
-    print("Ex 3:")
+    print("3:")
     # Epsilon is set to 0.05 based on the exercise privacy requirements.
     most_common_occupation = analyzer.most_common_noisy(epsilon=0.05, collumn="Occupation")
     print(f"Most common occupation with noisy: {most_common_occupation}")
 
     nextExercise()
-    print("Ex 4:")
-    analyzer = DifferentialPrivacyAnalyzer(adult_df) # Re-initialize with complete dataset
+    print("4:")
     max_capgain = adult_df['Capital Gain'].max()
     min_capgain = adult_df['Capital Gain'].min()
     print(f"Max Capital Gain: {max_capgain}, Min Capital Gain: {min_capgain}")
@@ -141,18 +135,14 @@ def main():
     print(f"Clipped max Capital Gain (99th percentile): {clipped_max}")
     print(f"Noisy sum of Capital Gain after clipping: {sum_capgain_noisy}")
 
-
     nextExercise()
-    analyzer = DifferentialPrivacyAnalyzer(adult_df) # Re-initialize with complete dataset
-    print("Ex 5:")
+    print("5:")
     max_age = adult_df['Age'].max()
     print(f"Sensitivity is max_age {max_age}")
     # No epsilon is specified in the excercise so 0.05 was used (No usful value given)
     noisy_age_diff = analyzer.dp_differencing_attack(epsilon=0.05)
     print(f"Noisy result for age sum difference when removing 'Karrie Trusslove': {noisy_age_diff}")
-
-
-
+    nextExercise()
 
 if __name__ == "__main__":
     main()
