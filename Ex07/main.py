@@ -57,19 +57,42 @@ class DifferentialPrivacyAnalyzer:
                     best = temp
         return best
     
-    def dp_sum_capgain(epsilon: float, df) -> float:
-        # Clipping parameter B (max contribution per individual)
-        B = 15000  
-        # Clip each individual's capital gain to the range [0, B]
-        clipped = df['Capital Gain'].clip(upper=B)
-        # Sensitivity is B (one person can change the clipped sum by at most B)
-        sensitivity = B
-        noisy_sum = clipped.sum() + np.random.laplace(0, sensitivity/epsilon)
-        return noisy_sum
+    def dp_sum_capital_gain(self, epsilon: float) -> float:
+        # Compute clipping threshold (99th percentile)
+        q99 = self.df["Capital Gain"].quantile(0.99)
+
+        # Clip values (replace values above q99 with q99)
+        clipped = self.df["Capital Gain"].clip(upper=q99)
+
+        # Sensitivity = clipping bound
+        sensitivity = q99
+
+        # Add Laplace noise
+        noise = np.random.laplace(0, sensitivity / epsilon)
+
+        noisy_sum = clipped.sum() + noise
+        return noisy_sum, clipped.max()
 
 
 
+    def clip_column(column: str, percentage: float) ->pd.DataFrame:
+        lower_bound = column.quantile(percentage / 2)
+        upper_bound = column.quantile(1 - (percentage / 2))
+        return column.clip(lower=lower_bound, upper=upper_bound)
+    
 
+    def dp_differencing_attack(self, epsilon: float):
+        sensitivity = 103
+        # Select the age of the person
+        age = self.df.loc[self.df['Name'] == 'Karrie Trusslove', 'Age'].iloc[0]
+
+        # Generate Laplace noise
+        noise = np.random.laplace(0, sensitivity / epsilon)
+
+        noisy_age = age + noise
+
+        return noisy_age
+    
 
 # Helper function to run all tasks
 def nextExercise():
@@ -109,17 +132,24 @@ def main():
 
     nextExercise()
     print("Ex 4:")
+    analyzer = DifferentialPrivacyAnalyzer(adult_df) # Re-initialize with complete dataset
     max_capgain = adult_df['Capital Gain'].max()
     min_capgain = adult_df['Capital Gain'].min()
     print(f"Max Capital Gain: {max_capgain}, Min Capital Gain: {min_capgain}")
-
+    print(f"Modifying Dataset by clipping the top capital gain 1%")
+    sum_capgain_noisy, clipped_max = analyzer.dp_sum_capital_gain(epsilon=0.04)
+    print(f"Clipped max Capital Gain (99th percentile): {clipped_max}")
+    print(f"Noisy sum of Capital Gain after clipping: {sum_capgain_noisy}")
 
 
     nextExercise()
+    analyzer = DifferentialPrivacyAnalyzer(adult_df) # Re-initialize with complete dataset
     print("Ex 5:")
-
-
-
+    max_age = adult_df['Age'].max()
+    print(f"Sensitivity is max_age {max_age}")
+    # No epsilon is specified in the excercise so 0.05 was used (No usful value given)
+    noisy_age_diff = analyzer.dp_differencing_attack(epsilon=0.05)
+    print(f"Noisy result for age sum difference when removing 'Karrie Trusslove': {noisy_age_diff}")
 
 
 
