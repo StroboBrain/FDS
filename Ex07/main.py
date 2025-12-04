@@ -43,18 +43,26 @@ class DifferentialPrivacyAnalyzer:
     def score(self, occupation):
         return (self.df['Occupation'] == occupation).sum()
     
-    def most_common_noisy(self, epsilon: float, collumn: str) -> str:
-        collumn = self.df['Occupation'].unique()
-        best_score = -float('inf')
-        best = None
-        sensitivity = 1  # Each person affects count of their occupation by at most 1
-        for temp in collumn:
-                true_count = self.score(temp)
-                noisy_count = true_count + np.random.laplace(0, sensitivity/epsilon)
-                if noisy_count > best_score:
-                    best_score = noisy_count
-                    best = temp
-        return best
+    def most_common_occupation(self, epsilon: float) -> str:
+        categories = self.df["Occupation"].unique()
+        sensitivity = 1  # Each person has only one occupation
+        
+        # Compute true scorees
+        scores = []
+
+        for c in categories:
+            score_val = self.score(c)
+            scores.append(score_val)
+
+        # Compute exponential mechanism weights for each category
+        weights = [np.exp((epsilon * s) / (2)) for s in scores]
+        total_weight = sum(weights)
+        # Normalize weights to get probabilities
+        probabilities = [w / total_weight for w in weights]
+        
+        # Randomly select a category according to the probability distribution
+        chosen_category = np.random.choice(categories, p=probabilities)
+        return chosen_category
     
     def dp_sum_capital_gain(self, epsilon: float) -> float:
         # Compute clipping threshold (99th percentile)
@@ -122,9 +130,8 @@ def main():
     nextExercise()
     print("3:")
     # Epsilon is set to 0.05 based on the exercise privacy requirements.
-    most_common_occupation = analyzer.most_common_noisy(epsilon=0.05, collumn="Occupation")
+    most_common_occupation = analyzer.most_common_occupation(epsilon=0.05)
     print(f"Most common occupation with noisy: {most_common_occupation}")
-
     nextExercise()
     print("4:")
     max_capgain = adult_df['Capital Gain'].max()
