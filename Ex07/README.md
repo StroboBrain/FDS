@@ -24,7 +24,7 @@ The accuracy decreases, because we noise to each entry.
 ## 3 a)
 It is one as well, because each entry has a maximum of one occupation.
 ## 3 b)
-Even though we add noise to multiple values, each person’s data influenced only one noisy count, so the privacy loss for any individual is bounded by ε = 0.04.
+Because we repeat the querry, we need to divide the epsilon the the count of unique occupations. TODO Change in code
 ## 4 a)
 There is a tradeoff between the information that is lost by clipping and the noise needed to ensure differential privacy. By removing the top 1%, we can lower the sensitivity of captialgain to 15'024
 
@@ -43,4 +43,5 @@ def differencing_attack():
     print(’Differencing attack result:’, differencing_attack())
 ```
 This attack is removing one persons age and therefore our sensitivity is age_max which is 103.
+
 The maximum impact we can achieve, when removing one entry from the dataset.
