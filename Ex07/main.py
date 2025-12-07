@@ -17,7 +17,7 @@ class DifferentialPrivacyAnalyzer:
         return sensitivity / epsilon
 
     def dp_count_over_value(self, column, value) -> int:
-        true_count = (self.df[column] == value).sum()
+        true_count = (self.df[column] > value).sum()
         return true_count
 
     def dp_contingency_table(self, col1, col2) -> pd.DataFrame:

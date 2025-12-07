@@ -2,7 +2,7 @@
 Create PDF or there are no points!
 
 # Manual
-Requires Python3
+Requires Python3 on your system.
 
 Step 1: Open a terminal and navigate to the project folder Ex07
 ```python3
@@ -16,13 +16,12 @@ python main.py
 # Excercise Sheet Answers
 
 ## 1 a) 
-The sensitivity of a count query is always 1, because we are comparing datasets, that are different in one entry.
+The sensitivity of a count query is always 1, because we are comparing datasets, that are different in one entry and when there is a counting function, there can be a maximum change of one.
 
 ## 2 a)
 Yes, the parallel compositions applies because we split the dataset into disjoint chunks. Each Person only contributes to one cell in this composed dataset.
 ## 2 b)
-The number of variables in the contingency table does not increase the privacy cost, as long as each individual data appears only in one cell.
-The accuracy decreases, because we noise to each entry.
+The number of variables in the contingency table does not increase the privacy cost, as long as each individual data appears only in one cell. But the accuracy decreases, because we add noise to each entry.
 
 ## 3 a)
 The sensitivity of the scoring function is one, because each person has a maximum of one occupation.
@@ -30,8 +29,8 @@ The sensitivity of the scoring function is one, because each person has a maximu
 Because we repeat the querry, we need to apply the exponential mechanismn. We only release the noisy score of the chosen maximum and therefor it is still epsion differential private, as mentioned on slide 36 of the Differential Privacy lecture.
 
 ## 4 a)
-There is a tradeoff between the information that is lost by clipping and the noise needed to ensure differential privacy. By removing the top 1%, we can lower the sensitivity of captialgain to 15'024
-# 4 b)
+There is a tradeoff between the information that is lost by clipping and the noise needed to ensure differential privacy. By clipping the top 1%, we can lower the sensitivity of captialgain to 15'024, which we deem a reasonable trade-off.
+## 4 b)
 The sensitivity is 15024 - 0 = 15024 so a difference in one entry contributies to a maximum +/- change of 15024
 ## 4 c)
 We apply the laplace noise to a clipped sum and therefore adding delta/epsilon noise to our sum which results in a total privacy cost of epsilon.
@@ -44,4 +43,4 @@ def differencing_attack():
     return q1 - q2
     print(’Differencing attack result:’, differencing_attack())
 ```
-This attack is removing one persons age and therefore our sensitivity is zero to age_max which is 103.This is maximum impact we can achieve, when removing one entry from the dataset.
+This attack is removing one persons age and therefore our sensitivity is zero to age_max which is 103.This is maximum impact we can achieve, when removing one entry from this dataset.
