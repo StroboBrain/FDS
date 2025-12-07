@@ -1,5 +1,5 @@
-# TODO
-Create PDF or there are no points!
+# Disclaimer
+This pdf was created from the README.md source file.
 
 # Manual
 Requires Python3 on your system.
