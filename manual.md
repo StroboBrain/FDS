@@ -182,6 +182,10 @@ Since the Concrete toolchain does not provide wheels for our available platforms
 * `test_fhe_mean.py` contains **conceptual** test cases (expected plaintext values)
 * These tests reflect desired correctness but were not run due to environment constraints
 
+### Update
+
+We managed to get 'concrete-numpy' running late Saturday on a machine running Ubuntu natively in combination with Python 3.10. The implementation including a set of tests can be found in the file 'Ex8_Fully_Homomorphic_Encryption.py'. It can be run using the command 'python3 Ex8_Fully_Homomorphic_Encryption.py'. However, given the late implementation, please use the main document as reference in case of inconsistencies.
+
 ---
 
 ## Cryptosystems Summary
